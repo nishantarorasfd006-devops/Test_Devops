@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'DEPLOY_BRANCH', defaultValue: 'QA', description: 'Branch to deploy to QA')
+    }
+
+    stages {
+        stage('Checkout Branch') {
+            steps {
+                git branch: "${params.DEPLOY_BRANCH}",
+                    url: 'https://github.com/nishantarorasfd006-devops/salesforce-devops.git'
+            }
+        }
+
+        stage('Debug CLI') {
+            steps {
+                bat 'sfdx --version'
+                bat 'sfdx plugins'
+            }
+        }
+
+        stage('Deploy to QA') {
+            steps {
+                // Deploy all source to QA org
+                bat 'sfdx force:source:deploy -u QA -p force-app --testlevel RunLocalTests -w 10'
+            }
+        }
+    }
+
+    post {
+        success {
+            echo 'Deployment to QA successful!'
+        }
+        failure {
+            echo 'Deployment to QA failed!'
+        }
+    }
+}
