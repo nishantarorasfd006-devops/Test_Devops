@@ -24,7 +24,7 @@ pipeline {
         stage('Deploy to QA') {
             steps {
                 // 🔥 NEW COMMAND (sf syntax)
-                bat 'sf project deploy start --target-org pro --source-dir force-app --test-level RunLocalTests --wait 10'
+                sf project deploy start --target-org QA --source-dir force-app --test-level NoTestRun --wait 10
             }
         }
     }
