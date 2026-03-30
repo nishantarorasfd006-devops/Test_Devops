@@ -7,27 +7,49 @@ pipeline {
   }
 
   stages {
+
     stage('Clone Code') {
       steps {
         git branch: "${params.BRANCH_NAME}",
             url: 'https://github.com/nishantarorasfd006-devops/salesforce-devops.git'
       }
     }
-  stage('Debug CLI') {
-    steps {
-      bat 'sf --version'
-      bat 'sf plugins'
-    }
-  }
-  stage('Check Plugins') {
-    steps {
-      bat 'sf plugins'
-    }
-  }
 
+    stage('Debug CLI') {
+      steps {
+        bat 'sf --version'
+        bat 'sf plugins'
+      }
+    }
+
+    // 🔥 NEW STAGE: Get Changed Files
+    stage('Get Changed Files') {
+      steps {
+        script {
+          def files = bat(
+            script: 'git diff --name-only HEAD~1 HEAD || git ls-files',
+            returnStdout: true
+          ).trim()
+
+          env.CHANGED_FILES = files
+          echo "Changed Files:\n${files}"
+        }
+      }
+    }
+
+    // 🔥 UPDATED: Scan only changed files
     stage('Static Code Analysis') {
       steps {
-       bat 'sf scanner run --target "force-app/main/default/classes/AccountController.cls" --format 
+        script {
+          def files = env.CHANGED_FILES.split("\\r?\\n")
+
+          for (f in files) {
+            if (f.endsWith('.cls') || f.endsWith('.trigger')) {
+              echo "Scanning file: ${f}"
+              bat "sf scanner run --target \"${f}\" --format table"
+            }
+          }
+        }
       }
     }
 
@@ -36,7 +58,7 @@ pipeline {
         expression { params.RUN_TESTS == 'YES' }
       }
       steps {
-        bat 'sfdx force:apex:test:run -u yourOrgAlias --codecoverage -r human'
+        bat 'sfdx force:apex:test:run -u QA --codecoverage -r human'
       }
     }
   }
