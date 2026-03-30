@@ -55,12 +55,33 @@ pipeline {
     }
 
     stage('Run Apex Tests') {
-      when {
-        expression { params.RUN_TESTS == 'YES' }
+  when {
+    expression { params.RUN_TESTS == 'YES' }
+  }
+  steps {
+    script {
+      def files = env.CHANGED_FILES.split("\\r?\\n")
+      def testClasses = []
+
+      for (f in files) {
+        if (f.endsWith('.cls') && !f.contains('Test')) {
+          def testClass = f.tokenize('/').last().replace('.cls', 'Test')
+          testClasses.add(testClass)
+        }
       }
-      steps {
-       bat "sf apex run test --target-org pro --code-coverage --result-format human --test-level RunLocalTests"
+
+      def testList = testClasses.join(',')
+
+      echo "Running Tests: ${testList}"
+
+      if (testList) {
+        bat "sf apex run test --target-org pro --tests ${testList} --code-coverage --result-format human --wait 10"
+      } else {
+        echo "No test classes found, running all tests"
+        bat "sf apex run test --target-org pro --test-level RunLocalTests --code-coverage --result-format human --wait 10"
       }
     }
+  }
+}
   }
 }
