@@ -58,7 +58,7 @@ pipeline {
         expression { params.RUN_TESTS == 'YES' }
       }
       steps {
-        bat '"C:\\Program Files\\SFDX\\bin\\sfdx.cmd" force:apex:test:run -u PROD --codecoverage -r human --testlevel RunLocalTests'
+        bat "sfdx force:apex:test:run -u PROD --codecoverage -r human --testlevel RunLocalTests"
       }
     }
   }
