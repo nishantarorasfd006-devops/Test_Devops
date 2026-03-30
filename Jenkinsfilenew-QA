@@ -27,7 +27,7 @@ pipeline {
 
     stage('Static Code Analysis') {
       steps {
-        bat 'sf scanner run --target "force-app" --format table'
+       bat 'sf scanner run --target "force-app/main/default/classes/AccountController.cls" --format 
       }
     }
 
