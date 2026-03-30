@@ -19,6 +19,7 @@ pipeline {
       steps {
         bat 'sf --version'
         bat 'sf plugins'
+        bat 'sf org list'
       }
     }
 
