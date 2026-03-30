@@ -58,7 +58,7 @@ pipeline {
         expression { params.RUN_TESTS == 'YES' }
       }
       steps {
-        bat 'sfdx force:apex:test:run -u QA --codecoverage -r human'
+        bat "sfdx force:apex:test:run -u PROD --codecoverage -r human --testlevel RunLocalTests"
       }
     }
   }
