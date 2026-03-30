@@ -15,15 +15,16 @@ pipeline {
 
         stage('Debug CLI') {
             steps {
-                bat 'sfdx --version'
-                bat 'sfdx plugins'
+                bat 'sf --version'
+                bat 'sf plugins'
+                bat 'sf org list'
             }
         }
 
         stage('Deploy to QA') {
             steps {
-                // Deploy all source to QA org
-                bat 'sf force:source:deploy -u pro -p force-app --testlevel RunLocalTests -w 10'
+                // 🔥 NEW COMMAND (sf syntax)
+                bat 'sf project deploy start --target-org pro --source-dir force-app --test-level RunLocalTests --wait 10'
             }
         }
     }
