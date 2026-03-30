@@ -23,7 +23,7 @@ pipeline {
         stage('Deploy to QA') {
             steps {
                 // Deploy all source to QA org
-                bat 'sfdx force:source:deploy -u QA -p force-app --testlevel RunLocalTests -w 10'
+                bat 'sf force:source:deploy -u QA -p force-app --testlevel RunLocalTests -w 10'
             }
         }
     }
