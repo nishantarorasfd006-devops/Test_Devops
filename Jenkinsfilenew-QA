@@ -59,7 +59,7 @@ pipeline {
         expression { params.RUN_TESTS == 'YES' }
       }
       steps {
-       bat "sf apex run test --target-org PROD --code-coverage --result-format human --test-level RunLocalTests"
+       bat "sf apex run test --target-org pro --code-coverage --result-format human --test-level RunLocalTests"
       }
     }
   }
